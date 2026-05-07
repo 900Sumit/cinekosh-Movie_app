@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node backend/index.js",
-    "build": "npm install --prefix frontend && npm run build --prefix frontend",
+    "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend",
     "fullstack": "concurrently \"npm run backend\" \"npm run frontend\"",
     "backend": "nodemon backend/index.js",
     "frontend": "cd frontend && npm run dev"
