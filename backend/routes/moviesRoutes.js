@@ -27,7 +27,7 @@ import {
 
 // Public Routes
 router.get("/all-movies", getAllMovies);
-router.get("/specific-movie/:id", getSpecificMovie);
+router.get("/specific-movie/:id", checkId, getSpecificMovie);
 router.get("/new-movies", getNewMovies);
 router.get("/top-movies", getTopMovies);
 router.get("/random-movies", getRandomMovies);
@@ -37,8 +37,8 @@ router.post("/:id/reviews", authenticate, checkId, validateReview, movieReview);
 
 // Admin
 router.post("/create-movie", authenticate, authorizeAdmin, validateCreateMovie, createMovie);
-router.put("/update-movie/:id", authenticate, authorizeAdmin, validateUpdateMovie, updateMovie);
-router.delete("/delete-movie/:id", authenticate, authorizeAdmin, deleteMovie);
+router.put("/update-movie/:id", checkId, authenticate, authorizeAdmin, validateUpdateMovie, updateMovie);
+router.delete("/delete-movie/:id", checkId, authenticate, authorizeAdmin, deleteMovie);
 router.delete("/delete-comment", authenticate, authorizeAdmin, validateDeleteComment, deleteComment);
 
 export default router;

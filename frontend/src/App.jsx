@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Navigation from "./pages/Auth/Navigation";
@@ -20,7 +20,7 @@ const App = () => {
         
         {/* Premium Floating Global Footer */}
         <div className="w-full px-4 md:px-6 mt-20 mb-4 md:mb-6 z-10 relative">
-          <footer className="w-full bg-[#0f0f10]/90 backdrop-blur-xl border border-gray-800/60 shadow-2xl rounded-[2rem] relative pt-10 pb-[100px] overflow-hidden">
+          <footer className="w-full bg-[#0f0f10]/90 backdrop-blur-xl border border-gray-800/60 shadow-2xl rounded-[2rem] relative pt-10 pb-24 md:pb-10 overflow-hidden">
             {/* Decorative Top Border Glow */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-teal-500/30 to-transparent"></div>
             
@@ -42,8 +42,8 @@ const App = () => {
               
               {/* Links (Visual only for aesthetics) */}
               <div className="flex items-center gap-6 text-xs text-gray-400 font-medium tracking-wide">
-                <a href="#" className="hover:text-teal-400 transition-colors">Privacy Policy</a>
-                <a href="#" className="hover:text-teal-400 transition-colors">Terms of Service</a>
+                <Link to="/about" className="hover:text-teal-400 transition-colors">About</Link>
+                <Link to="/movies" className="hover:text-teal-400 transition-colors">Browse</Link>
               </div>
             </div>
           </footer>

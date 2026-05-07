@@ -39,6 +39,12 @@ const UpdateMovie = () => {
   const [uploadImage, { isLoading: isUploadingImage }] = useUploadImageMutation();
   const [deleteMovie, { isLoading: isDeletingMovie }] = useDeleteMovieMutation();
 
+  const parseCast = (castValue) =>
+    castValue
+      .split(",")
+      .map((c) => c.trim())
+      .filter(Boolean);
+
   useEffect(() => {
     if (initialMovieData) {
       setMovieData({
@@ -91,21 +97,29 @@ const UpdateMovie = () => {
       if (selectedImage) {
         const formData = new FormData();
         formData.append("image", selectedImage);
-        const uploadImageResponse = await uploadImage(formData);
-        if (uploadImageResponse.data) {
-          finalImagePath = uploadImageResponse.data.image;
-        } else {
-          toast.error("Failed to upload image file");
-          return;
-        }
+        const uploadImageResponse = await uploadImage(formData).unwrap();
+        finalImagePath = uploadImageResponse.image;
       }
+
+      const payload = {
+        name: movieData.name,
+        year: Number(movieData.year),
+        detail: movieData.detail,
+        cast: Array.isArray(movieData.cast)
+          ? movieData.cast.filter(Boolean)
+          : parseCast(String(movieData.cast || "")),
+        director: movieData.director,
+        trailerLink: movieData.trailerLink,
+        language: movieData.language,
+        duration: movieData.duration ? Number(movieData.duration) : undefined,
+        isFeatured: Boolean(movieData.isFeatured),
+        genre: movieData.genre,
+        image: finalImagePath,
+      };
 
       await updateMovie({
         id,
-        updatedMovie: {
-          ...movieData,
-          image: finalImagePath,
-        },
+        updatedMovie: payload,
       }).unwrap();
 
       toast.success("Movie updated successfully");
@@ -179,7 +193,7 @@ const UpdateMovie = () => {
           </div>
           <div>
             <label className={labelClasses}>Cast (comma-separated)</label>
-            <input type="text" name="cast" value={movieData.cast?.join(", ") || ""} onChange={(e) => setMovieData({ ...movieData, cast: e.target.value.split(",").map((c) => c.trim()) })} className={inputClasses} placeholder="Actor 1, Actor 2" />
+            <input type="text" name="cast" value={movieData.cast?.join(", ") || ""} onChange={(e) => setMovieData({ ...movieData, cast: parseCast(e.target.value) })} className={inputClasses} placeholder="Actor 1, Actor 2" />
           </div>
         </div>
 

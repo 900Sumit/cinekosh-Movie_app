@@ -4,14 +4,19 @@ import asyncHandler from "../middlewares/asyncHandler.js";
 import createToken from "../utils/createToken.js";
 
 const createUser = asyncHandler(async (req, res) => {
-  const { username, email, password } = req.body;
+  const username = req.body.username?.trim();
+  const email = req.body.email?.trim().toLowerCase();
+  const { password } = req.body;
 
   if (!username || !email || !password) {
     throw new Error("Please fill all the fields");
   }
 
   const userExists = await User.findOne({ email });
-  if (userExists) res.status(400).send("User already exists");
+  if (userExists) {
+    res.status(400);
+    throw new Error("User already exists");
+  }
 
   // Hash the user password
   const salt = await bcrypt.genSalt(10);
@@ -35,7 +40,8 @@ const createUser = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+  const email = req.body.email?.trim().toLowerCase();
+  const { password } = req.body;
 
   const existingUser = await User.findOne({ email });
 
@@ -48,7 +54,7 @@ const loginUser = asyncHandler(async (req, res) => {
     if (isPasswordValid) {
       createToken(res, existingUser._id);
 
-      res.status(201).json({
+      res.status(200).json({
         _id: existingUser._id,
         username: existingUser.username,
         email: existingUser.email,
@@ -95,8 +101,23 @@ const updateCurrentUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
 
   if (user) {
-    user.username = req.body.username || user.username;
-    user.email = req.body.email || user.email;
+    const updatedUsername = req.body.username?.trim();
+    const updatedEmail = req.body.email?.trim().toLowerCase();
+
+    if (updatedEmail && updatedEmail !== user.email) {
+      const existingEmail = await User.findOne({
+        email: updatedEmail,
+        _id: { $ne: user._id },
+      });
+
+      if (existingEmail) {
+        res.status(400);
+        throw new Error("Email is already in use");
+      }
+    }
+
+    user.username = updatedUsername || user.username;
+    user.email = updatedEmail || user.email;
 
     if (req.body.password) {
       const salt = await bcrypt.genSalt(10);

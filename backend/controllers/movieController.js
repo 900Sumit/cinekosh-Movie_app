@@ -1,11 +1,41 @@
 import Movie from "../models/Movie.js";
 import asyncHandler from "../middlewares/asyncHandler.js";
 
+const normalizeMoviePayload = (payload = {}) => {
+  const normalized = { ...payload };
+
+  if (Array.isArray(normalized.cast)) {
+    normalized.cast = normalized.cast
+      .map((member) => String(member).trim())
+      .filter(Boolean);
+  } else if (typeof normalized.cast === "string") {
+    normalized.cast = normalized.cast
+      .split(",")
+      .map((member) => member.trim())
+      .filter(Boolean);
+  }
+
+  if (normalized.year !== undefined && normalized.year !== "") {
+    normalized.year = Number(normalized.year);
+  }
+
+  if (normalized.duration !== undefined && normalized.duration !== "") {
+    normalized.duration = Number(normalized.duration);
+  }
+
+  if (normalized.duration === "") {
+    normalized.duration = undefined;
+  }
+
+  delete normalized.imageUrl;
+  return normalized;
+};
+
 // @desc    Create a new movie
 // @route   POST /api/v1/movies/create-movie
 // @access  Admin
 const createMovie = asyncHandler(async (req, res) => {
-  const newMovie = new Movie(req.body);
+  const newMovie = new Movie(normalizeMoviePayload(req.body));
   const savedMovie = await newMovie.save();
   res.status(201).json(savedMovie);
 });
@@ -44,7 +74,7 @@ const getAllMovies = asyncHandler(async (req, res) => {
 // @route   GET /api/v1/movies/specific-movie/:id
 // @access  Public
 const getSpecificMovie = asyncHandler(async (req, res) => {
-  const movie = await Movie.findById(req.params.id);
+  const movie = await Movie.findById(req.params.id).populate("genre", "name");
 
   if (!movie) {
     res.status(404);
@@ -58,9 +88,11 @@ const getSpecificMovie = asyncHandler(async (req, res) => {
 // @route   PUT /api/v1/movies/update-movie/:id
 // @access  Admin
 const updateMovie = asyncHandler(async (req, res) => {
+  const payload = normalizeMoviePayload(req.body);
+
   const updatedMovie = await Movie.findByIdAndUpdate(
     req.params.id,
-    req.body,
+    payload,
     { new: true, runValidators: true }
   );
 
@@ -154,15 +186,29 @@ const deleteComment = asyncHandler(async (req, res) => {
     throw new Error("Review not found");
   }
 
-  movie.reviews.splice(reviewIndex, 1);
-  movie.numReviews = movie.reviews.length;
-  movie.rating =
-    movie.reviews.length > 0
-      ? movie.reviews.reduce((acc, item) => item.rating + acc, 0) /
-        movie.reviews.length
+  const reviewsAfterDelete = movie.reviews.filter(
+    (r) => r._id.toString() !== reviewId
+  );
+
+  const numReviews = reviewsAfterDelete.length;
+  const rating =
+    numReviews > 0
+      ? reviewsAfterDelete.reduce((acc, item) => item.rating + acc, 0) /
+        numReviews
       : 0;
 
-  await movie.save();
+  await Movie.findByIdAndUpdate(
+    movieId,
+    {
+      $set: {
+        reviews: reviewsAfterDelete,
+        numReviews,
+        rating,
+      },
+    },
+    { new: true }
+  );
+
   res.json({ message: "Review deleted successfully" });
 });
 

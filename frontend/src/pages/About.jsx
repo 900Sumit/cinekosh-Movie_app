@@ -1,4 +1,4 @@
-import { FiFilm, FiLayers, FiStar, FiGlobe, FiUsers } from "react-icons/fi";
+import { FiLayers, FiStar, FiGlobe, FiUsers } from "react-icons/fi";
 
 const About = () => {
   return (

@@ -11,7 +11,7 @@ import SliderUtil from "../../component/SliderUtil";
 import MovieCard from "./MovieCard";
 
 const MoviesContainerPage = () => {
-  const { data: newMovies, isLoading: loadingNew } = useGetNewMoviesQuery();
+  const { isLoading: loadingNew } = useGetNewMoviesQuery();
   const { data: topMovies, isLoading: loadingTop } = useGetTopMoviesQuery();
   const { data: genres } = useFetchGenresQuery();
   const { data: randomMovies, isLoading: loadingRandom } = useGetRandomMoviesQuery();
@@ -25,7 +25,10 @@ const MoviesContainerPage = () => {
 
   const filteredMovies =
     allMovies?.filter(
-      (movie) => selectedGenre === null || movie.genre === selectedGenre
+      (movie) =>
+        selectedGenre === null ||
+        (typeof movie.genre === "string" ? movie.genre : movie.genre?._id) ===
+          selectedGenre
     ) || [];
 
   const isLoading = loadingNew || loadingTop || loadingRandom || loadingAll;

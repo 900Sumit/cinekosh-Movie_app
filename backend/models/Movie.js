@@ -29,6 +29,7 @@ const movieSchema = new mongoose.Schema(
     duration: { type: Number }, // in minutes
     isFeatured: { type: Boolean, default: false },
     reviews: [reviewSchema],
+    rating: { type: Number, required: true, default: 0 },
     numReviews: { type: Number, required: true, default: 0 },
     createdAt: { type: Date, default: Date.now },
   },

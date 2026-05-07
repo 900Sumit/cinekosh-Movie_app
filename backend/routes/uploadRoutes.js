@@ -1,4 +1,5 @@
 import path from "path";
+import fs from "fs";
 import express from "express";
 import multer from "multer";
 
@@ -6,6 +7,7 @@ const router = express.Router();
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    fs.mkdirSync("uploads", { recursive: true });
     cb(null, "uploads/");
   },
 
@@ -16,10 +18,10 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-  const filetypes = /jpe?g|png|webp/;
-  const mimetypes = /image\/jpe?g|image\/png||image\/webp/;
+  const filetypes = /\.(jpe?g|png|webp)$/i;
+  const mimetypes = /^image\/(jpe?g|png|webp)$/i;
 
-  const extname = path.extname(file.originalname);
+  const extname = path.extname(file.originalname).toLowerCase();
   const mimetype = file.mimetype;
 
   if (filetypes.test(extname) && mimetypes.test(mimetype)) {

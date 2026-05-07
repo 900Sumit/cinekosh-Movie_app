@@ -43,7 +43,7 @@ const router = createBrowserRouter(
 
       <Route path="" element={<AdminRoute />}>
         <Route element={<AdminDashboard />}>
-          <Route path="/admin/movies/dashboard" index element={<Main />} />
+          <Route path="/admin/movies/dashboard" element={<Main />} />
           <Route path="/admin/movies/genre" element={<GenreList />} />
           <Route path="/admin/movies/create" element={<CreateMovie />} />
           <Route path="/admin/movies-list" element={<AdminMoviesList />} />

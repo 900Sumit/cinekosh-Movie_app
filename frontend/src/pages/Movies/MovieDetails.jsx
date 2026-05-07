@@ -13,7 +13,8 @@ const MovieDetails = () => {
   const { id: movieId } = useParams();
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
-  const { data: movie, refetch, isLoading } = useGetSpecificMovieQuery(movieId);
+  const { data: movie, refetch, isLoading, isError, error } =
+    useGetSpecificMovieQuery(movieId);
   const { userInfo } = useSelector((state) => state.auth);
   const [createReview, { isLoading: loadingMovieReview }] =
     useAddMovieReviewMutation();
@@ -22,6 +23,11 @@ const MovieDetails = () => {
     e.preventDefault();
 
     try {
+      if (rating < 1 || rating > 5) {
+        toast.error("Please select a rating between 1 and 5.");
+        return;
+      }
+
       await createReview({
         id: movieId,
         rating,
@@ -33,7 +39,7 @@ const MovieDetails = () => {
       setRating(0);
       toast.success("Review created successfully");
     } catch (error) {
-      toast.error(error.data || error.message);
+      toast.error(error?.data?.message || error?.message || "Failed to add review");
     }
   };
 
@@ -41,6 +47,23 @@ const MovieDetails = () => {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader />
+      </div>
+    );
+  }
+
+  if (isError || !movie) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-20 text-center">
+        <h2 className="text-2xl text-white font-bold mb-3">Movie not found</h2>
+        <p className="text-gray-400 mb-6">
+          {error?.data?.message || "This movie is unavailable right now."}
+        </p>
+        <Link
+          to="/movies"
+          className="inline-flex items-center px-5 py-2.5 rounded-lg bg-teal-500 hover:bg-teal-600 text-white text-sm font-medium transition-colors"
+        >
+          Browse Movies
+        </Link>
       </div>
     );
   }

@@ -5,7 +5,6 @@ import Loader from "../../component/Loader";
 import CustomSelect from "../../component/CustomSelect";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import banner from "../../assets/banner.jpg";
 import {
   setMoviesFilter,
   setFilteredMovies,
@@ -35,7 +34,8 @@ const AllMovies = () => {
     }
   }, [data]);
 
-  const currentBannerImage = data && data.length > 0 ? data[currentImageIndex]?.image : banner;
+  const currentBannerImage =
+    data && data.length > 0 ? data[currentImageIndex]?.image : "";
 
   // Safely extract and store unique years when data arrives
   useEffect(() => {
@@ -63,7 +63,9 @@ const AllMovies = () => {
     // 2. Apply Genre Filter
     if (moviesFilter.selectedGenre) {
       result = result.filter(
-        (movie) => movie.genre === moviesFilter.selectedGenre
+        (movie) =>
+          (typeof movie.genre === "string" ? movie.genre : movie.genre?._id) ===
+          moviesFilter.selectedGenre
       );
     }
 
@@ -132,8 +134,12 @@ const AllMovies = () => {
     <div className="w-full min-h-screen">
       {/* ── Hero Banner ── */}
       <section
-        className="relative h-[22rem] md:h-[28rem] w-full flex items-center justify-center bg-cover bg-center transition-all duration-1000 ease-in-out"
-        style={{ backgroundImage: `url(${currentBannerImage})` }}
+        className="relative h-[22rem] md:h-[28rem] w-full flex items-center justify-center bg-cover bg-center transition-all duration-1000 ease-in-out bg-gradient-to-br from-[#0f172a] via-[#0a0a0b] to-[#111827]"
+        style={{
+          backgroundImage: currentBannerImage
+            ? `url(${currentBannerImage})`
+            : undefined,
+        }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/50 to-[#0a0a0b] backdrop-blur-[2px]"></div>
 
@@ -255,7 +261,7 @@ const AllMovies = () => {
               No movies found
             </h2>
             <p className="text-gray-500 mb-6 max-w-md">
-              Try adjusting your filters or search terms to find what you're looking for.
+              Try adjusting your filters or search terms to find what you are looking for.
             </p>
             <button
               onClick={clearAllFilters}

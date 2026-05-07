@@ -11,6 +11,9 @@ const fail = (res, message, statusCode = 400) => {
   return res.status(statusCode).json({ message });
 };
 
+const isNonEmptyString = (value) =>
+  typeof value === "string" && value.trim().length > 0;
+
 // ══════════════════════════════════════
 // USER VALIDATORS
 // ══════════════════════════════════════
@@ -20,6 +23,10 @@ const validateRegister = (req, res, next) => {
 
   if (!username || !email || !password) {
     return fail(res, "Username, email, and password are all required.");
+  }
+
+  if (!isNonEmptyString(username)) {
+    return fail(res, "Username is required.");
   }
 
   if (username.trim().length < 2 || username.trim().length > 50) {
@@ -56,7 +63,12 @@ const validateLogin = (req, res, next) => {
 const validateProfileUpdate = (req, res, next) => {
   const { username, email, password } = req.body;
 
-  if (username !== undefined && (username.trim().length < 2 || username.trim().length > 50)) {
+  if (
+    username !== undefined &&
+    (typeof username !== "string" ||
+      username.trim().length < 2 ||
+      username.trim().length > 50)
+  ) {
     return fail(res, "Username must be between 2 and 50 characters.");
   }
 
@@ -81,7 +93,7 @@ const validateProfileUpdate = (req, res, next) => {
 const validateCreateMovie = (req, res, next) => {
   const { name, year, genre, detail, duration } = req.body;
 
-  if (!name || !name.trim()) {
+  if (!isNonEmptyString(name)) {
     return fail(res, "Movie name is required.");
   }
 
@@ -106,7 +118,7 @@ const validateCreateMovie = (req, res, next) => {
     return fail(res, "Invalid genre selection.");
   }
 
-  if (!detail || !detail.trim()) {
+  if (!isNonEmptyString(detail)) {
     return fail(res, "Movie detail/description is required.");
   }
 
@@ -127,7 +139,10 @@ const validateCreateMovie = (req, res, next) => {
 const validateUpdateMovie = (req, res, next) => {
   const { name, year, genre, detail, duration } = req.body;
 
-  if (name !== undefined && (!name.trim() || name.trim().length > 200)) {
+  if (
+    name !== undefined &&
+    (typeof name !== "string" || !name.trim() || name.trim().length > 200)
+  ) {
     return fail(res, "Movie name must be 1-200 characters.");
   }
 
@@ -142,7 +157,10 @@ const validateUpdateMovie = (req, res, next) => {
     return fail(res, "Invalid genre selection.");
   }
 
-  if (detail !== undefined && detail.trim().length > 2000) {
+  if (
+    detail !== undefined &&
+    (typeof detail !== "string" || detail.trim().length > 2000)
+  ) {
     return fail(res, "Movie description must be under 2000 characters.");
   }
 
@@ -190,7 +208,7 @@ const validateReview = (req, res, next) => {
 const validateGenre = (req, res, next) => {
   const { name } = req.body;
 
-  if (!name || !name.trim()) {
+  if (!isNonEmptyString(name)) {
     return fail(res, "Genre name is required.");
   }
 

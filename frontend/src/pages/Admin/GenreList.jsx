@@ -48,7 +48,7 @@ const GenreList = () => {
   const handleUpdateGenre = async (e) => {
     e.preventDefault();
 
-    if (!updateGenre) {
+    if (!updatingName.trim()) {
       toast.error("Genre name is required");
       return;
     }
@@ -72,6 +72,7 @@ const GenreList = () => {
       }
     } catch (error) {
       console.error(error);
+      toast.error(error?.data?.message || "Updating genre failed. Try again.");
     }
   };
 
@@ -89,7 +90,7 @@ const GenreList = () => {
       }
     } catch (error) {
       console.error(error);
-      toast.error("Genre deletion failed. Tray again.");
+      toast.error(error?.data?.message || "Genre deletion failed. Try again.");
     }
   };
 

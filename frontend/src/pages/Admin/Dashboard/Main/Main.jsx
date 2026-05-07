@@ -28,7 +28,7 @@ const Main = () => {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-extrabold text-white tracking-tight mb-2">Dashboard Overview</h1>
-        <p className="text-gray-500 text-sm">Welcome back. Here is what's happening today.</p>
+        <p className="text-gray-500 text-sm">Welcome back. Here is what is happening today.</p>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8 items-start">

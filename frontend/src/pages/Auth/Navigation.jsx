@@ -58,9 +58,9 @@ const Navigation = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[100] bg-[#141414]/95 backdrop-blur-xl border border-gray-800/80 px-6 py-3 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.7)] flex items-center gap-6 transition-all w-max">
+    <div className="fixed bottom-3 md:bottom-6 left-1/2 transform -translate-x-1/2 z-[100] bg-[#141414]/95 backdrop-blur-xl border border-gray-800/80 px-4 md:px-6 py-3 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.7)] flex items-center justify-between md:justify-normal gap-4 md:gap-6 transition-all w-[calc(100%-1rem)] max-w-[500px] md:w-max">
       {/* Primary Navigation Links */}
-      <div className="flex items-center gap-5">
+      <div className="flex items-center gap-4 md:gap-5">
         <Link
           to="/"
           className={`group flex flex-col items-center transition-colors ${
@@ -97,7 +97,7 @@ const Navigation = () => {
       </div>
 
       {/* Separator */}
-      <div className="h-6 w-px bg-gray-700/60"></div>
+      <div className="h-6 w-px bg-gray-700/60 shrink-0"></div>
 
       {/* User Actions & Dropdown */}
       <div className="relative flex items-center" ref={dropdownRef}>
@@ -152,7 +152,7 @@ const Navigation = () => {
             )}
           </div>
         ) : (
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-4 md:gap-5">
             <Link
               to="/login"
               className={`group flex flex-col items-center transition-colors ${

@@ -32,6 +32,12 @@ const CreateMovie = () => {
   const [uploadImage, { isLoading: isUploadingImage }] = useUploadImageMutation();
   const { data: genres, isLoading: isLoadingGenres } = useFetchGenresQuery();
 
+  const parseCast = (castValue) =>
+    castValue
+      .split(",")
+      .map((c) => c.trim())
+      .filter(Boolean);
+
   useEffect(() => {
     if (genres && genres.length > 0) {
       setMovieData((prevData) => ({
@@ -93,18 +99,23 @@ const CreateMovie = () => {
         const formData = new FormData();
         formData.append("image", selectedImage);
 
-        const uploadImageResponse = await uploadImage(formData);
-        if (uploadImageResponse.data) {
-          finalImagePath = uploadImageResponse.data.image;
-        } else {
-          toast.error("Failed to upload image file");
-          return;
-        }
+        const uploadImageResponse = await uploadImage(formData).unwrap();
+        finalImagePath = uploadImageResponse.image;
       }
 
-      await createMovie({
+      const payload = {
         ...movieData,
+        year: Number(movieData.year),
+        duration: movieData.duration ? Number(movieData.duration) : undefined,
+        cast: Array.isArray(movieData.cast)
+          ? movieData.cast.filter(Boolean)
+          : parseCast(String(movieData.cast || "")),
         image: finalImagePath,
+      };
+      delete payload.imageUrl;
+
+      await createMovie({
+        ...payload,
       }).unwrap();
 
       navigate("/admin/movies-list");
@@ -166,7 +177,7 @@ const CreateMovie = () => {
           </div>
           <div>
             <label className={labelClasses}>Cast (comma-separated)</label>
-            <input type="text" name="cast" value={movieData.cast.join(", ")} onChange={(e) => setMovieData({ ...movieData, cast: e.target.value.split(",").map((c) => c.trim()) })} className={inputClasses} placeholder="Actor 1, Actor 2" />
+            <input type="text" name="cast" value={movieData.cast.join(", ")} onChange={(e) => setMovieData({ ...movieData, cast: parseCast(e.target.value) })} className={inputClasses} placeholder="Actor 1, Actor 2" />
           </div>
         </div>
 

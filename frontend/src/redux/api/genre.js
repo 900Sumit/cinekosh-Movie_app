@@ -9,6 +9,7 @@ export const genreApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: newGenre,
       }),
+      invalidatesTags: ["Genre"],
     }),
 
     updateGenre: builder.mutation({
@@ -17,6 +18,7 @@ export const genreApiSlice = apiSlice.injectEndpoints({
         method: "PUT",
         body: updateGenre,
       }),
+      invalidatesTags: ["Genre"],
     }),
 
     deleteGenre: builder.mutation({
@@ -24,10 +26,12 @@ export const genreApiSlice = apiSlice.injectEndpoints({
         url: `${GENRE_URL}/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["Genre"],
     }),
 
     fetchGenres: builder.query({
       query: () => `${GENRE_URL}/genres`,
+      providesTags: ["Genre"],
     }),
   }),
 });

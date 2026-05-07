@@ -1,6 +1,15 @@
 import { Link } from "react-router-dom";
 
-const MovieTabs = ({ userInfo, submitHandler, comment, setComment, movie }) => {
+const MovieTabs = ({
+  userInfo,
+  submitHandler,
+  rating,
+  setRating,
+  comment,
+  setComment,
+  movie,
+  loadingMovieReview,
+}) => {
   return (
     <div>
       {/* Review Form Section */}
@@ -10,6 +19,27 @@ const MovieTabs = ({ userInfo, submitHandler, comment, setComment, movie }) => {
         {userInfo ? (
           <form onSubmit={submitHandler} className="mb-8">
             <div className="mb-4">
+              <label
+                htmlFor="rating"
+                className="block text-sm font-medium text-gray-400 mb-2"
+              >
+                Rating
+              </label>
+              <select
+                id="rating"
+                value={rating}
+                onChange={(e) => setRating(Number(e.target.value))}
+                className="w-full max-w-xs p-3 mb-4 bg-[#1a1a1a] border border-gray-700 rounded-xl text-white focus:outline-none focus:border-teal-500 transition-colors text-sm"
+                required
+              >
+                <option value={0}>Select rating</option>
+                <option value={1}>1 - Poor</option>
+                <option value={2}>2 - Fair</option>
+                <option value={3}>3 - Good</option>
+                <option value={4}>4 - Very Good</option>
+                <option value={5}>5 - Excellent</option>
+              </select>
+
               <label
                 htmlFor="comment"
                 className="block text-sm font-medium text-gray-400 mb-2"
@@ -29,9 +59,10 @@ const MovieTabs = ({ userInfo, submitHandler, comment, setComment, movie }) => {
 
             <button
               type="submit"
+              disabled={loadingMovieReview}
               className="px-6 py-2.5 bg-teal-500 hover:bg-teal-600 text-white text-sm font-medium rounded-lg transition-colors"
             >
-              Submit Review
+              {loadingMovieReview ? "Submitting..." : "Submit Review"}
             </button>
           </form>
         ) : (
