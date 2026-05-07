@@ -137,7 +137,7 @@ const CreateMovie = () => {
           </div>
           <div>
             <label className={labelClasses}>Release Year *</label>
-            <input type="number" name="year" value={movieData.year} onChange={handleChange} className={inputClasses} placeholder="e.g. 2024" />
+            <input type="number" name="year" value={movieData.year} onChange={handleChange} className={inputClasses} placeholder="e.g. 2026" />
           </div>
 
           {/* New Fields */}
